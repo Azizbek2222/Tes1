@@ -13,10 +13,22 @@ onBalanceChange(bal => {
 async function showAd() {
     return new Promise(resolve => {
         if(!window.Adsgram){ alert("AdsGram SDK yuklanmagan"); resolve(false); return; }
+
         const AdController = window.Adsgram.init({ blockId: "int-18178" });
+
         AdController.show()
-            .then(result => resolve(result.done && !result.error))
-            .catch(() => resolve(false));
+            .then(result => {
+                console.log("Ad result:", result);
+                if(result.done && !result.error){
+                    resolve(true); // foydalanuvchi reklama ko‘rdi va tugatdi
+                } else {
+                    resolve(false); // reklama yopildi yoki xato
+                }
+            })
+            .catch(err => {
+                console.log("Ad error:", err);
+                resolve(false);
+            });
     });
 }
 

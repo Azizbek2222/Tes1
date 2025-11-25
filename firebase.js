@@ -1,6 +1,7 @@
 // Firebase SDK modullari
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, set, onValue, runTransaction } 
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // Firebase config
 const firebaseConfig = {
