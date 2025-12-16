@@ -5,38 +5,23 @@
 <title>HTML Run App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-  font-family: 'Segoe UI', sans-serif;
-}
+*{box-sizing:border-box;font-family:Segoe UI,sans-serif}
 
 body{
-  min-height:100vh;
   margin:0;
-  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  min-height:100vh;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
   color:#fff;
 }
 
+/* EDITOR */
 .app{
-  width:95%;
   max-width:700px;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(15px);
-  border-radius:20px;
+  margin:auto;
   padding:25px;
-  box-shadow:0 15px 40px rgba(0,0,0,0.4);
-}
-
-h2{
-  margin-top:0;
-  text-align:center;
 }
 
 textarea{
@@ -45,9 +30,6 @@ textarea{
   border-radius:12px;
   border:none;
   padding:15px;
-  font-size:14px;
-  resize:none;
-  outline:none;
 }
 
 button{
@@ -59,87 +41,56 @@ button{
   font-size:16px;
   font-weight:bold;
   cursor:pointer;
-  background: linear-gradient(135deg,#00f260,#0575e6);
+  background:linear-gradient(135deg,#00f260,#0575e6);
   color:#fff;
-  transition:0.3s;
 }
 
-button:hover{
-  transform:scale(1.03);
-  box-shadow:0 0 15px rgba(0,242,96,0.6);
-}
-
-#link{
-  text-align:center;
-  margin-top:15px;
-  word-break:break-all;
-}
-
-#link a{
-  color:#00ffcc;
-  text-decoration:none;
-  font-weight:bold;
-}
-
-hr{
-  border:none;
-  height:1px;
-  background: rgba(255,255,255,0.2);
-  margin:25px 0;
-}
-
-#result{
-  background: rgba(0,0,0,0.35);
-  padding:15px;
-  border-radius:12px;
-  min-height:80px;
+/* RUN PAGE */
+#runResult{
+  padding:20px;
 }
 </style>
-
 </head>
 <body>
 
-<div class="app">
+<!-- EDITOR -->
+<div id="editor" class="app">
   <h2>🚀 HTML Run App</h2>
-
-  <textarea id="code" placeholder="HTML kodni shu yerga yozing..."></textarea>
+  <textarea id="code" placeholder="HTML yozing..."></textarea>
   <button onclick="save()">▶ RUN & LINK</button>
-
   <p id="link"></p>
-
-  <hr>
-
-  <h2>📤 Natija</h2>
-  <div id="result"></div>
 </div>
 
+<!-- RUN NATIJA -->
+<div id="runResult" style="display:none"></div>
+
 <script>
-var firebaseConfig = {
-  apiKey: "AIzaSyBrMKJ4MPilQg6gZsaE-Hlqlgo5F4Q8IsM",
-  databaseURL: "https://xabar-tizimi-default-rtdb.firebaseio.com"
+var firebaseConfig={
+  apiKey:"AIzaSyBrMKJ4MPilQg6gZsaE-Hlqlgo5F4Q8IsM",
+  databaseURL:"https://xabar-tizimi-default-rtdb.firebaseio.com"
 };
 firebase.initializeApp(firebaseConfig);
+var db=firebase.database();
 
-var db = firebase.database();
-
-// URLdan ID olish
-var params = new URLSearchParams(window.location.search);
-var runId = params.get("run");
+var params=new URLSearchParams(location.search);
+var runId=params.get("run");
 
 if(runId){
+  document.getElementById("editor").style.display="none";
+  document.getElementById("runResult").style.display="block";
+
   db.ref("codes/"+runId).once("value").then(snap=>{
-    document.getElementById("result").innerHTML = snap.val();
+    document.getElementById("runResult").innerHTML=snap.val();
   });
 }
 
-// Saqlash
 function save(){
-  var code = document.getElementById("code").value;
-  var id = Date.now();
+  var code=document.getElementById("code").value;
+  var id=Date.now();
   db.ref("codes/"+id).set(code);
 
-  var link = location.origin + location.pathname + "?run=" + id;
-  document.getElementById("link").innerHTML =
+  var link=location.origin+location.pathname+"?run="+id;
+  document.getElementById("link").innerHTML=
     `<a href="${link}" target="_blank">${link}</a>`;
 }
 </script>
