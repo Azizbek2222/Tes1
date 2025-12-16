@@ -1,128 +1,156 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  
-    <title>AdsGram Integratsiyali Kirish</title>
-    
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+<meta charset="UTF-8">
+<title>HTML olish</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <style>
-        * {
-            box-sizing: border-box; 
-        }
-        
-        body {
-            font-family: sans-serif;
-            text-align: center;
-            padding-top: 50px;
-            margin: 0; 
-            background-color: #f4f4f4; 
-        }
-        #kirishTugmasi {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        #kirishTugmasi:disabled {
-             /* Tugma faol emas (disabled) holatda xira ko'rinadi */
-            background-color: #a3c9f2; 
-            cursor: not-allowed;
-        }
-        #kirishTugmasi:hover:not(:disabled) {
-            background-color: #0056b3;
-        }
-        #xabar {
-            margin-top: 20px;
-            color: red;
-            font-weight: bold;
-        }
-    </style>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: #e5e7eb;
+}
 
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #38bdf8;
+}
+
+.input-box {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+}
+
+button {
+    padding: 12px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#get {
+    background: #22c55e;
+    color: #022c22;
+}
+
+#copy {
+    background: #38bdf8;
+    color: #022c22;
+    margin-top: 10px;
+}
+
+#copy:active {
+    transform: scale(0.97);
+}
+
+.code-box {
+    margin-top: 20px;
+    background: #020617;
+    border-radius: 10px;
+    padding: 15px;
+    overflow: auto;
+    max-height: 450px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    white-space: pre;
+}
+
+/* Syntax highlight */
+.tag { color: #38bdf8; }
+.attr { color: #facc15; }
+.value { color: #4ade80; }
+.text { color: #e5e7eb; }
+
+.footer {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 13px;
+    opacity: 0.7;
+}
+</style>
 </head>
 <body>
 
-    <h1>Kirish Uchun Reklamani Ko'ring</h1>
-    
-    <button id="kirishTugmasi" onclick="kirish()">
-        Saytga Kirish
-    </button>
-    
-    <p id="xabar"></p>
+<div class="container">
+    <h1>HTML olish</h1>
 
-    <script>
-        // ⚠️ DIQQAT: "your-block-id" o'rniga o'zingizning haqiqiy AdsGram blok ID'ingizni qo'ying!
-        const BLOCK_ID = "int-18178"; 
-        const TARGET_URL = "https://aladdin-telegram.1it.uz/login";
-        const kirishTugmasi = document.getElementById('kirishTugmasi');
-        const xabarElementi = document.getElementById('xabar');
+    <div class="input-box">
+        <input id="url" placeholder="Sayt linkini kiriting...">
+        <button id="get" onclick="loadHTML()">Olish</button>
+    </div>
 
-        // AdsGram AdController'ni ishga tushirish funksiyasi
-        function initAdsgram() {
-            if (window.Adsgram && BLOCK_ID !== "int-18178") {
-                return window.Adsgram.init({ blockId: BLOCK_ID });
-            } else if (BLOCK_ID === "int-18178") {
-                console.error("AdsGram blok ID'si kiritilmagan. Iltimos, 'your-block-id' ni o'zgartiring.");
-                xabarElementi.innerText = "XATO: Iltimos, AdsGram blok ID'sini to'g'rilang.";
-                return null;
-            } else {
-                console.error("AdsGram SDK yuklanmadi.");
-                xabarElementi.innerText = "XATO: AdsGram kutubxonasini yuklashda muammo yuz berdi.";
-                return null;
-            }
-        }
+    <button id="copy" onclick="copyHTML()">📋 Kodni nusxalash</button>
 
-        const AdController = initAdsgram();
-        
-        // Kirish tugmasi bosilganda ishlaydigan asosiy funksiya
-        function kirish() {
-            // Tugmani bosib bo'lmas holatga keltirish (reklama jarayoni davomida)
-            kirishTugmasi.disabled = true;
-            xabarElementi.innerText = "Reklama yuklanmoqda...";
-            
-            if (!AdController) {
-                // Agar AdController ishga tushmasa (masalan, BLOCK_ID noto'g'ri bo'lsa)
-                console.log("AdController ishga tushmadi.");
-                xabarElementi.innerText = "Reklama xizmati ishga tushmadi. Qayta urining.";
-                kirishTugmasi.disabled = false; // Tugmani qayta faollashtirish
-                return;
-            }
-            
-            // Reklamani ko'rsatish
-            AdController.show()
-                .then((result) => {
-                    if (result.done) {
-                        // Reklama muvaffaqiyatli ko'rsatildi
-                        xabarElementi.innerText = "✅ Reklama muvaffaqiyatli yakunlandi. Saytga yo'naltirilmoqda...";
-                        
-                        // 0.5 soniyadan so'ng saytga yo'naltirish
-                        setTimeout(() => {
-                             window.location.href = TARGET_URL;
-                        }, 500); 
-                       
-                    } else {
-                         // Reklama to'liq ko'rilmadi yoki yopildi (interstitial bo'lsa)
-                         xabarElementi.innerText = "Reklama jarayoni to'liq yakunlanmadi. Iltimos, qayta urining.";
-                         kirishTugmasi.disabled = false; // Tugmani qayta faollashtirish
-                    }
-                })
-                .catch((errorResult) => {
-                    // Reklama yuklanishida yoki ko'rsatilishida xato yuz bersa (reklama chiqmasa)
-                    console.error("Reklama xatosi:", errorResult);
-                    
-                    // Siz so'ragan xabar:
-                    xabarElementi.innerText = "Reklama chiqishida xato yuz berdi. Iltimos, qayta urining!";
-                    
-                    // Xatolik yuz berganda foydalanuvchiga qayta urinish imkoniyatini berish
-                    kirishTugmasi.disabled = false;
-                });
-        }
-    </script>
+    <div id="result" class="code-box">Bu yerda HTML kodi chiqadi...</div>
+
+    <div class="footer">
+        HTML Parser • PHP server orqali
+    </div>
+</div>
+
+<script>
+function loadHTML() {
+    let url = document.getElementById("url").value;
+    document.getElementById("result").textContent = "Yuklanmoqda...";
+
+    fetch("http://10.2.40.111:45267/gethtml.php?url=" + encodeURIComponent(url))
+        .then(r => r.text())
+        .then(data => {
+            document.getElementById("result").innerHTML = highlightHTML(data);
+            window.rawHTML = data;
+        })
+        .catch(() => {
+            document.getElementById("result").textContent = "Xatolik yuz berdi";
+        });
+}
+
+/* 🔧 TUZATILGAN COPY FUNKSIYA (HTTP DA HAM ISHLAYDI) */
+function copyHTML() {
+    if (!window.rawHTML) {
+        alert("Avval HTML oling");
+        return;
+    }
+
+    let textarea = document.createElement("textarea");
+    textarea.value = window.rawHTML;
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, 999999);
+
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+
+    alert("HTML kodi nusxalandi");
+}
+
+function highlightHTML(code) {
+    return code
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/(&lt;\/?)([a-zA-Z0-9\-]+)/g, '$1<span class="tag">$2</span>')
+        .replace(/([a-zA-Z-]+)=(".*?")/g, '<span class="attr">$1</span>=<span class="value">$2</span>');
+}
+</script>
 
 </body>
 </html>
