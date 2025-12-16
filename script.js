@@ -1,64 +1,88 @@
 const editor = document.getElementById('code-editor');
 const resultIframe = document.getElementById('result-iframe');
+const shareLinkOutput = document.getElementById('share-link-output');
 
 // --- 1. Kodni ishga tushirish funksiyasi ---
 function runCode() {
     const code = editor.value;
-    // Kiritilgan HTML kodni iframe ichida ko'rsatish
-    // srcdoc xususiyati iframe ga HTML kodni to'g'ridan-to'g'ri joylash imkonini beradi.
     resultIframe.srcdoc = code;
 }
 
 // --- 2. URL manzilidagi kodni o'qish va yuklash funksiyasi ---
 function loadCodeFromUrl() {
-    // Agar URL manzilida hash fragmenti (#...) bo'lsa
     if (window.location.hash) {
         try {
-            // # belgisini olib tashlab, qolgan qismni olish
             const encoded = window.location.hash.substring(1);
             
             // Base64 dan decode (ochish)
             const decodedCode = atob(encoded);
 
-            // Muharrirga yuklash
             editor.value = decodedCode;
-
-            // Koddni darhol ishga tushirish
             runCode();
             
             console.log("Kod URL orqali muvaffaqiyatli yuklandi.");
         } catch (e) {
             console.error("Kodni decode qilishda xatolik yuz berdi:", e);
-            alert("Ushbu havola yaroqsiz kodni o'z ichiga olgan.");
+            // alert("Ushbu havola yaroqsiz kodni o'z ichiga olgan."); // Agar xohlamasangiz, bu qatorni o'chirishingiz mumkin
         }
     } else {
         // Agar havola bo'sh bo'lsa, muharrirga namuna kodni yuklash
         editor.value = `<h1>Salom, Bu mening HTML Snip Loyiham!</h1>
 <p>Natijani ko'rish uchun "Run"ni bosing.</p>
+<style>
+  h1 { color: red; }
+</style>
 <script>
     console.log("Skript ishlayapti");
-    document.body.style.backgroundColor = 'lightblue';
 </\script>`;
-        runCode(); // Namuna kodni ham ishga tushirish
+        runCode(); 
     }
 }
 
-// --- 3. Ulashish uchun havola yaratish funksiyasi ---
+// --- 3. Ulashish uchun havola yaratish funksiyasi (Yaxshilangan) ---
 function getShareLink() {
     const code = editor.value;
-    
-    // Base64 yordamida kodlash
     const encoded = btoa(code);
-
+    
     // Yangi URL manzilini # belgisidan keyin kodlangan ma'lumot bilan yaratish
-    // window.location.pathname - /snip/ qismini ushlab qoladi
     const newUrl = `${window.location.origin}${window.location.pathname}#${encoded}`;
 
-    // Brauzer manzil satrini yangilash (sahifani qayta yuklamasdan)
+    // Brauzer manzil satrini yangilash
     window.history.pushState(null, '', newUrl);
 
-    // Foydalanuvchiga havolani berish
-    alert("Ulashish havolasi yaratildi va manzil satriga o'rnatildi:\n" + newUrl);
+    // Havolani kiritish maydoniga joylash va nusxalash
+    shareLinkOutput.value = newUrl;
+    shareLinkOutput.style.display = 'block'; // Maydonni ko'rsatish
+    shareLinkOutput.select(); // Havolani tanlash
+
+    try {
+        document.execCommand('copy'); // Nusxalash
+        alert("🔗 Ulashish havolasi yaratildi va manzil satriga o'rnatildi. Havola avtomatik nusxalandi!");
+    } catch (err) {
+        alert("🔗 Ulashish havolasi yaratildi, lekin nusxalashda xatolik yuz berdi. Manzil satridan qo'lda nusxalang.");
+    }
+}
+
+
+// --- 4. Telefon/Kompyuter faylidan kodni yuklash funksiyasi (Yangi) ---
+function loadFile(event) {
+    const file = event.target.files[0];
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+    
+    // Fayl o'qib bo'lingach
+    reader.onload = (e) => {
+        // Muharrirga fayl ichidagi matnni joylash
+        editor.value = e.target.result;
+        runCode(); // Koddni darhol ishga tushirish
+        alert(`"${file.name}" fayli muvaffaqiyatli yuklandi.`);
+    };
+
+    // Faylni matn sifatida o'qish
+    reader.readAsText(file);
 }
 
 // Sahifa yuklanganda kodni URL dan avtomatik yuklash

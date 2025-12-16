@@ -19,8 +19,13 @@
             <textarea id="code-editor" placeholder="HTML kodingizni bu yerga yozing..."></textarea>
             <div class="actions">
                 <button onclick="runCode()">▶️ Run (Ishga tushirish)</button>
-                <button onclick="getShareLink()">🔗 Get Share Link (Havolani olish)</button>
+                
+                <input type="file" id="file-input" style="display: none;" onchange="loadFile(event)">
+                <button onclick="document.getElementById('file-input').click()">📁 Fayldan yuklash</button>
+                
+                <button onclick="getShareLink()">🔗 Havolani olish/Nusxalash</button>
             </div>
+            <input type="text" id="share-link-output" placeholder="Ulashish havolasi shu yerda paydo bo'ladi" readonly style="margin-top: 10px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; display: none;">
         </div>
 
         <div class="panel result">
