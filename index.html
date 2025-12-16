@@ -7,22 +7,17 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase.js"></script>
 <style>
 *{box-sizing:border-box;font-family:Segoe UI,sans-serif}
-/* O'ZGARTIRILDI: run sahifasida hech qanday orqa fon va bo'sh joy qolmasligi uchun */
 body{
   margin:0;
-  padding:0;
   min-height:100vh;
-  /* Qolgan CSS stillari (fon rang, gradient) o'chirildi */
-  color:#000; /* Matn rangi, agar kod o'z matn rangini belgilamasa */
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+  color:#fff;
 }
 /* EDITOR */
 .app{
   max-width:700px;
   margin:auto;
   padding:25px;
-  /* Editorning o'z fonini saqlab qolish uchun qo'shimcha stil, faqat editor ko'rinib turganda ishlaydi */
-  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364); 
-  color:#fff;
 }
 input, textarea{
   width:100%;
@@ -47,16 +42,14 @@ button{
   color:#fff;
 }
 /* RUN PAGE */
-/* O'ZGARTIRILDI: Linkka kirilganda hech qanday padding (bo'sh joy) qolmasligi uchun */
 #runResult{
-  padding:0; 
-  width: 100%;
-  height: 100vh;
+  padding:20px;
 }
 </style>
 </head>
 <body>
 
+<!-- EDITOR -->
 <div id="editor" class="app">
   <h2>🚀 HTML Run App - Cheksiz Fayl</h2>
   <input type="text" id="name" placeholder="Link nomini yozing (masalan: loyiham-mening)">
@@ -66,6 +59,7 @@ button{
   <p id="link"></p>
 </div>
 
+<!-- RUN NATIJA -->
 <div id="runResult" style="display:none"></div>
 
 <script>
@@ -81,44 +75,19 @@ var params=new URLSearchParams(location.search);
 var runId=params.get("run");
 
 if(runId){
-  // Linkga kirilganda tana (body) stillarini butunlay o'chirish
-  document.body.style.background = 'none';
-  document.body.style.color = 'inherit';
-  document.body.style.minHeight = '0';
-  document.body.style.overflow = 'hidden'; // O'ram qismini olib tashlash
-
   document.getElementById("editor").style.display="none";
   document.getElementById("runResult").style.display="block";
 
   db.ref("codes/"+runId).once("value").then(snap=>{
     var files = snap.val(); // Object: {filename: code}
-    var mainFileCode = null;
-    
-    // index kalitini qidirish (agar u barcha fayllar ichida bo'lsa)
-    if (files.index) {
-        mainFileCode = files.index;
-    } else {
-        // Agar index topilmasa, birinchi faylni olish
-        for(var fname in files){
-            mainFileCode = files[fname];
-            break; // Faqat birinchi faylni olib, tugatish
-        }
-    }
-
-    if (mainFileCode) {
-        var iframe = document.createElement("iframe");
-        iframe.style.width="100%";
-        // O'ZGARTIRILDI: Kichik oyna emas, butun ekranni egallashi uchun
-        iframe.style.height="100vh"; 
-        iframe.style.border="none"; // Chegarani olib tashlash
-        // Faqat topilgan asosiy fayl iframe ichida ochiladi
-        iframe.srcdoc = mainFileCode;
-        document.getElementById("runResult").appendChild(iframe);
-        
-        // Iframe'ning joylashuvi butun ekranga moslashishi uchun
-        document.getElementById("runResult").style.position = 'fixed';
-        document.getElementById("runResult").style.top = '0';
-        document.getElementById("runResult").style.left = '0';
+    for(var fname in files){
+      var iframe = document.createElement("iframe");
+      iframe.style.width="100%";
+      iframe.style.height="500px";
+      iframe.style.border="1px solid #fff";
+      // Har bir fayl alohida sahifa sifatida iframe ichida ochiladi
+      iframe.srcdoc = files[fname];
+      document.getElementById("runResult").appendChild(iframe);
     }
   });
 }
@@ -135,8 +104,7 @@ function save(){
 
   if(files.length === 0){
     var codeArea = document.getElementById("code").value;
-    // Fayl tanlanmagan bo'lsa, 'index' nomi ostida saqlanadi
-    fileCodes["index"] = codeArea; 
+    fileCodes["index"] = codeArea;
     saveToFirebase(name, fileCodes);
   } else {
     let readCount = 0;
@@ -144,8 +112,7 @@ function save(){
       let file = files[i];
       let reader = new FileReader();
       reader.onload = function(e){
-        // Fayl nomini olamiz (index.html -> index, style.css -> style)
-        let fname = file.name.replace(/\.[^/.]+$/,""); 
+        let fname = file.name.replace(/\.[^/.]+$/,"");
         fileCodes[fname] = e.target.result;
         readCount++;
         if(readCount === files.length){
