@@ -23,7 +23,7 @@
             <div class="actions">
                 <button onclick="runCode()">▶️ Run (Ishga tushirish)</button>
                 
-                <input type="file" id="file-input" style="display: none;" onchange="loadFile(event)">
+                <input type="file" id="file-input" style="display: none;" onchange="loadFile(event)" multiple>
                 <button onclick="document.getElementById('file-input').click()">📁 Fayldan yuklash</button>
                 
                 <button onclick="saveAndGetFirebaseLink()">💾 Save & Get Link</button>

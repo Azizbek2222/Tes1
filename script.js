@@ -161,23 +161,45 @@ async function loadCodeFromUrl() {
     }
 }
 
-// --- 4. Telefon/Kompyuter faylidan kodni yuklash funksiyasi (O'zgarishsiz) ---
+// --- 4. Telefon/Kompyuter faylidan kodni yuklash funksiyasi (O'zgartirildi) ---
 function loadFile(event) {
-    const file = event.target.files[0];
-    if (!file) {
+    const files = event.target.files;
+    if (files.length === 0) {
         return;
     }
 
-    const reader = new FileReader();
-    
-    reader.onload = (e) => {
-        editor.value = e.target.result;
-        runCode(); 
-        shareLinkOutput.style.display = 'none';
-        alert(`"${file.name}" fayli muvaffaqiyatli yuklandi.`);
-    };
+    let allContent = "";
+    let filesLoaded = 0;
+    const totalFiles = files.length;
+    let fileNames = [];
 
-    reader.readAsText(file);
+    // Barcha fayllarni o'qish uchun tsikl
+    for (let i = 0; i < totalFiles; i++) {
+        const file = files[i];
+        fileNames.push(file.name);
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            // Har bir fayl tarkibini fayl nomi bilan qo'shamiz
+            allContent += `\n/* --- ${file.name} (File Content Start) --- */\n`;
+            allContent += e.target.result;
+            allContent += `\n/* --- ${file.name} (File Content End) --- */\n`;
+
+            filesLoaded++;
+            
+            // Barcha fayllar o'qib bo'lingach, muharrirni yangilash
+            if (filesLoaded === totalFiles) {
+                editor.value = allContent.trim(); // Trim qilingan tarkibni o'rnatish
+                runCode(); 
+                shareLinkOutput.style.display = 'none';
+                
+                // Muvaffaqiyat xabari
+                alert(`✅ Quyidagi fayllar muvaffaqiyatli yuklandi: ${fileNames.join(', ')}.`);
+            }
+        };
+
+        reader.readAsText(file);
+    }
 }
 
 // Sahifa yuklanganda kodni yuklash
